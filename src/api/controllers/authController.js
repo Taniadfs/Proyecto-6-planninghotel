@@ -36,6 +36,38 @@ const register = async (req, res) => {
   }
 }
 
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body
+    const user = await User.findOne({ email })
+
+    if (!user) {
+      return res.status(401).json({ message: 'Datos incorrectos' })
+    }
+    const isMatch = await bcrypt.compare(password, user.password)
+    if (!isMatch) return res.status(401).json({ message: 'Datos incorrectos' })
+
+    const token = jwt.sign(
+      { userId: user._id, rol: user.rol },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    )
+    return res.status(200).json({
+      message: 'Inicio de sesión exitoso',
+      token,
+      user: {
+        _id: user._id,
+        nombre: user.nombre,
+        email: user.email,
+        department: user.department,
+        rol: user.rol
+      }
+    })
+  } catch (error) {
+    return res.status(500).json({ message: 'Error al iniciar sesión' })
+  }
+}
+
 module.exports = {
   register,
   login
