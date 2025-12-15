@@ -17,15 +17,7 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, 'La contraseña es obligatoria'],
-      minlength: [8, 'La contraseña debe tener mínimo 8 caracteres'],
-      validate: {
-        validator: function (v) {
-          return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(v)
-        },
-        message:
-          'La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula y un número'
-      }
+      required: [true, 'La contraseña es obligatoria']
     },
     role: {
       type: String,
@@ -35,9 +27,9 @@ const userSchema = new mongoose.Schema(
       },
       default: 'user'
     },
-    departement: {
+    department: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Departement'
+      ref: 'Department'
     }
   },
   { timestamps: true }

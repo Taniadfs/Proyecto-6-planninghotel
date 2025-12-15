@@ -1,25 +1,47 @@
-const user = require('../models/user')
+const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const Department = require('../models/department')
 
 const register = async (req, res) => {
   try {
     const { nombre, email, password, department } = req.body
+
+    if (!password || password.length < 8) {
+      return res.status(400).json({
+        message: 'La contraseña debe tener mínimo 8 caracteres'
+      })
+    }
+
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password)) {
+      return res.status(400).json({
+        message:
+          'La contraseña debe tener una mayúscula, una minúscula y un número'
+      })
+    }
+
+    if (department) {
+      const deptExists = await Department.findById(department)
+      if (!deptExists) {
+        return res.status(404).json({ message: 'El departamento no existe' })
+      }
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10)
-    const newUser = await user.create({
+    const newUser = await User.create({
       nombre,
       email,
       password: hashedPassword,
       department
     })
     return res.status(201).json({
-      newUser: 'Usuario registrado exitosamente',
+      message: 'Usuario registrado exitosamente',
       user: {
         _id: newUser._id,
         nombre: newUser.nombre,
         email: newUser.email,
         department: newUser.department,
-        rol: newUser.rol
+        role: newUser.role
       }
     })
   } catch (error) {
@@ -48,7 +70,7 @@ const login = async (req, res) => {
     if (!isMatch) return res.status(401).json({ message: 'Datos incorrectos' })
 
     const token = jwt.sign(
-      { userId: user._id, rol: user.rol },
+      { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     )
@@ -60,7 +82,7 @@ const login = async (req, res) => {
         nombre: user.nombre,
         email: user.email,
         department: user.department,
-        rol: user.rol
+        role: user.role
       }
     })
   } catch (error) {
