@@ -6,9 +6,17 @@ const createDepartment = async (req, res) => {
     const newDepartment = await Department.create(req.body)
     return res.status(201).json(newDepartment)
   } catch (error) {
-    {
-      return res.status(400).json({ message: 'Error al crear el departamento' })
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message: 'Ya existe un departamento con ese nombre'
+      })
     }
+    if (error.name === 'ValidationError') {
+      return res
+        .status(400)
+        .json({ message: 'Datos inválidos. Verifica los campos requeridos' })
+    }
+    return res.status(500).json({ message: 'Error al crear el departamento' })
   }
 }
 
@@ -29,9 +37,11 @@ const getDepartmentById = async (req, res) => {
     if (!department) {
       return res.status(404).json({ message: 'Departamento no encontrado' })
     }
-
     return res.status(200).json(department)
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ message: 'ID de departamento inválido' })
+    }
     return res.status(500).json({ message: 'Error al obtener el departamento' })
   }
 }
@@ -40,8 +50,13 @@ const updateDepartment = async (req, res) => {
   try {
     const { id } = req.params
 
+    if (Object.keys(req.body).length === 0) {
+      return res.status(400).json({ message: 'No hay datos para actualizar' })
+    }
+
     const updatedDepartment = await Department.findByIdAndUpdate(id, req.body, {
-      new: true
+      new: true,
+      runValidators: true
     })
 
     if (!updatedDepartment) {
@@ -50,6 +65,21 @@ const updateDepartment = async (req, res) => {
 
     return res.status(200).json(updatedDepartment)
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ message: 'ID de departamento inválido' })
+    }
+
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({
+        message: 'Datos inválidos. El nombre debe ser "Recepción" o "Pisos"'
+      })
+    }
+
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message: 'Ya existe un departamento con ese nombre'
+      })
+    }
     return res
       .status(500)
       .json({ message: 'Error al actualizar el departamento' })
@@ -79,6 +109,9 @@ const deleteDepartment = async (req, res) => {
       department: deletedDepartment
     })
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ message: 'ID de departamento inválido' })
+    }
     return res
       .status(500)
       .json({ message: 'Error al eliminar el departamento' })
