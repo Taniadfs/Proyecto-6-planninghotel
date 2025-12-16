@@ -117,3 +117,10 @@ const deleteDepartment = async (req, res) => {
       .json({ message: 'Error al eliminar el departamento' })
   }
 }
+module.exports = {
+  createDepartment,
+  getAllDepartments,
+  getDepartmentById,
+  updateDepartment,
+  deleteDepartment
+}
