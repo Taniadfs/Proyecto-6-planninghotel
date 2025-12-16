@@ -1,13 +1,9 @@
 const express = require('express')
 const router = express.Router()
+const { register, login } = require('../controllers/authController')
 
-// TODO: Agregar controllers más adelante
-router.post('/register', (req, res) => {
-  res.json({ message: 'Register endpoint - TODO' })
-})
+router.post('/register', register)
 
-router.post('/login', (req, res) => {
-  res.json({ message: 'Login endpoint - TODO' })
-})
+router.post('/login', login)
 
 module.exports = router
