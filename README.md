@@ -83,4 +83,4 @@ El token se obtiene al hacer login y tiene una duración de 1 hora.
    Tania - GitHub
 
 📄 Licencia
-Este proyecto es de uso educativo.
+ISC

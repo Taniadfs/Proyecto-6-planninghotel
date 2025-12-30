@@ -1,16 +1,16 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcrypt')
 require('dotenv').config()
 
-const Department = require('../models/department')
-const User = require('../models/user')
-const Planning = require('../models/planning')
+const Department = require('../../api/models/department')
+const User = require('../../api/models/user')
+const Planning = require('../../api/models/planning')
 
 const seedData = require('./data')
 
 const seedDatabase = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI)
+    await mongoose.connect(process.env.MONGO_URI)
     console.log('Conectado a MongoDB')
 
     await Department.deleteMany({})
