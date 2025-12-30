@@ -22,7 +22,6 @@ const seedDatabase = async () => {
     const departments = await Department.insertMany(seedData.departments)
     console.log(`${departments.length} departamentos creados`)
 
-    // 4. Crear Users (con referencias a Departments)
     const usersToCreate = await Promise.all(
       seedData.users.map(async (userData) => {
         const department = departments.find(
@@ -43,7 +42,6 @@ const seedDatabase = async () => {
     const users = await User.insertMany(usersToCreate)
     console.log(`${users.length} usuarios creados`)
 
-    // 5. Crear Plannings (con referencias a Users)
     const planningsToCreate = seedData.plannings.map((planningData) => {
       const user = users.find((u) => u.email === planningData.userEmail)
       return {
@@ -61,9 +59,8 @@ const seedDatabase = async () => {
   } catch (error) {
     console.error('Error en el seed:', error)
   } finally {
-    // 6. Cerrar conexión
     await mongoose.connection.close()
-    console.log('👋 Conexión cerrada')
+    console.log('Conexión cerrada')
   }
 }
 
