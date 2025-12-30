@@ -1,3 +1,5 @@
+HOTEL-PLANNING-API
+
 1. Descripción
    API REST para la gestión de planificación de turnos de trabajadores de hotel. Permite crear y administrar departamentos, usuarios y plannings semanales con control de roles (admin/user).
 
@@ -13,33 +15,34 @@
 
 MONGODB_URI=tu_cadena_de_conexion_mongodb
 JWT_SECRET=tu_clave_secreta_jwt
-PORT=3000 4. Endpoints
+PORT=3000
+4 Endpoints
 Autenticación
 Método Endpoint Descripción Auth Rol
-POST /auth/register Registrar nuevo usuario ❌ -
-POST /auth/login Iniciar sesión ❌ -
+POST /api/auth/register Registrar nuevo usuario ❌ -
+POST /api/auth/login Iniciar sesión ❌ -
 Departamentos
 Método Endpoint Descripción Auth Rol
-GET /departments Obtener todos los departamentos ✅ admin, user
-GET /departments/:id Obtener departamento por ID ✅ admin, user
-POST /departments Crear departamento ✅ admin
-PUT /departments/:id Actualizar departamento ✅ admin
-DELETE /departments/:id Eliminar departamento ✅ admin
+GET /api/departments Obtener todos los departamentos ✅ admin, user
+GET /api/departments/:id Obtener departamento por ID ✅ admin, user
+POST /api/departments Crear departamento ✅ admin
+PUT /api/departments/:id Actualizar departamento ✅ admin
+DELETE /api/departments/:id Eliminar departamento ✅ admin
 Usuarios
 Método Endpoint Descripción Auth Rol
-GET /users Obtener todos los usuarios ✅ admin
-GET /users/:id Obtener usuario por ID ✅ admin, user
-PUT /users/:id Actualizar usuario ✅ admin, user
-DELETE /users/:id Eliminar usuario ✅ admin
+GET /api/users Obtener todos los usuarios ✅ admin
+GET /api/users/:id Obtener usuario por ID ✅ admin, user
+PUT /api/users/:id Actualizar usuario ✅ admin, user
+DELETE /api/users/:id Eliminar usuario ✅ admin
 Plannings
 Método Endpoint Descripción Auth Rol
-POST /plannings Crear planning ✅ admin
-GET /plannings Obtener todos los plannings ✅ admin, user
-GET /plannings/:id Obtener planning por ID ✅ admin, user
-GET /plannings/user/:userId Obtener plannings de un usuario ✅ admin, user
-PUT /plannings/:id Actualizar planning ✅ admin
-DELETE /plannings/:id Eliminar planning ✅ admin
-PATCH /plannings/:id/publish Publicar planning ✅ admin 5. Autenticación
+POST /api/plannings Crear planning ✅ admin
+GET /api/plannings Obtener todos los plannings ✅ admin, user
+GET /api/plannings/:id Obtener planning por ID ✅ admin, user
+GET /api/plannings/user/:userId Obtener plannings de un usuario ✅ admin, user
+PUT /api/plannings/:id Actualizar planning ✅ admin
+DELETE /api/plannings/:id Eliminar planning ✅ admin
+PATCH /api/plannings/:id/publish Publicar planning ✅ admin 5. Autenticación
 Todas las rutas protegidas requieren un token JWT en el header:
 
 Authorization: Bearer <token>
