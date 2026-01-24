@@ -28,6 +28,14 @@ const getUserById = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params
+    const { userId, role } = req.user
+
+    if (userId !== id && role !== 'admin') {
+      return res
+        .status(403)
+        .json({ message: 'No tienes permiso para actualizar este usuario' })
+    }
+
     const { password, ...datosActualizables } = req.body
     if (Object.keys(datosActualizables).length === 0) {
       return res.status(400).json({ message: 'No hay datos para actualizar' })
@@ -71,6 +79,25 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params
+    const { userId, role } = req.user
+
+    if (role !== 'admin') {
+      return res.status(403).json({
+        message: 'Solo los administradores pueden eliminar usuarios'
+      })
+    }
+    const seEliminaUnoMismo = userId === id
+    if (seEliminaUnoMismo) {
+      const countAdmins = await User.countDocuments({ role: 'admin' })
+
+      if (countAdmins <= 1) {
+        return res.status(400).json({
+          message:
+            'No puedes eliminar tu propia cuenta si eres el único administrador'
+        })
+      }
+    }
+
     const user = await User.findById(id)
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' })
