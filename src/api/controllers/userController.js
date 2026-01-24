@@ -91,7 +91,7 @@ const deleteUser = async (req, res) => {
       const countAdmins = await User.countDocuments({ role: 'admin' })
 
       if (countAdmins <= 1) {
-        return res.status(400).json({
+        return res.status(403).json({
           message:
             'No puedes eliminar tu propia cuenta si eres el único administrador'
         })

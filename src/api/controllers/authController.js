@@ -90,7 +90,67 @@ const login = async (req, res) => {
   }
 }
 
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body
+    const { userId } = req.user
+
+    if (!currentPassword) {
+      return res.status(400).json({
+        message: 'La contraseña actual es requerida'
+      })
+    }
+
+    if (!newPassword) {
+      return res.status(400).json({
+        message: 'La nueva contraseña es requerida'
+      })
+    }
+    const user = await User.findById(userId).select('+password')
+    if (!user) {
+      return res.status(404).json({
+        message: 'Usuario no encontrado'
+      })
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password)
+    if (!isMatch) {
+      return res.status(401).json({
+        message: 'La contraseña actual es incorrecta'
+      })
+    }
+
+    if (newPassword === currentPassword) {
+      return res.status(400).json({
+        message: 'La nueva contraseña debe ser diferente a la actual'
+      })
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        message: 'La nueva contraseña debe tener mínimo 8 caracteres'
+      })
+    }
+
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(newPassword)) {
+      return res.status(400).json({
+        message:
+          'La nueva contraseña debe tener una mayúscula, una minúscula y un número'
+      })
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10)
+    user.password = hashedPassword
+    await user.save()
+
+    return res.status(200).json({ message: 'Contraseña cambiada exitosamente' })
+  } catch (error) {
+    return res.status(500).json({ message: 'Error al cambiar la contraseña' })
+  }
+}
+
 module.exports = {
   register,
-  login
+  login,
+  changePassword
 }
