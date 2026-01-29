@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const authenticate = require('../middlewares/authenticate')
-const checkRole = require('../middlewares/checkRole')
+const authenticate = require('../../middlewares/authenticate')
+const checkRole = require('../../middlewares/checkRole')
 
 const {
   createDepartment,

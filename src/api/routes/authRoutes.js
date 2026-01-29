@@ -4,8 +4,8 @@ const {
   register,
   login,
   changePassword
-} = require('../controllers/authController')
-const authenticate = require('../../middlewares/authenticate')
+} = require('../../controllers/authController')
+const authenticate = require('../../../middlewares/authenticate')
 
 router.post('/register', register)
 
