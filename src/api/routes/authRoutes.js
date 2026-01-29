@@ -5,7 +5,7 @@ const {
   login,
   changePassword
 } = require('../../controllers/authController')
-const authenticate = require('../../../middlewares/authenticate')
+const authenticate = require('../../middlewares/authenticate')
 
 router.post('/register', register)
 
