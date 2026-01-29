@@ -39,9 +39,9 @@ const createPlanning = async (req, res) => {
     return res.status(201).json(newPlanning)
   } catch (error) {
     if (error.name === 'ValidationError') {
-      return res
-        .status(400)
-        .json({ message: 'Datos inválidos. Verifica los campos requeridos' })
+      return res.status(400).json({
+        message: error.message
+      })
     }
     if (error.name === 'CastError') {
       return res.status(400).json({ message: 'ID de usuario inválido' })
@@ -100,25 +100,32 @@ const updatePlanning = async (req, res) => {
       return res.status(400).json({ message: 'No hay datos para actualizar' })
     }
 
-    if (semanaInicio && semanaFin) {
-      const inicio = new Date(semanaInicio)
-      const fin = new Date(semanaFin)
+    const planningActual = await Planning.findById(id)
+    if (!planningActual) {
+      return res.status(404).json({ message: 'Planning no encontrado' })
+    }
+    if (planningActual.publicado) {
+      return res.status(403).json({
+        message: 'No se puede actualizar un planning publicado'
+      })
+    }
 
-      if (fin <= inicio) {
-        return res.status(400).json({
-          message: 'La fecha de fin debe ser posterior a la fecha de inicio'
-        })
-      }
+    const fechaInicioFinal = semanaInicio || planningActual.semanaInicio
+    const fechaFinFinal = semanaFin || planningActual.semanaFin
+
+    const inicio = new Date(fechaInicioFinal)
+    const fin = new Date(fechaFinFinal)
+
+    if (fin <= inicio) {
+      return res.status(400).json({
+        message: 'La fecha de fin debe ser posterior a la fecha de inicio'
+      })
     }
 
     const updatedPlanning = await Planning.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true
     }).populate('user')
-
-    if (!updatedPlanning) {
-      return res.status(404).json({ message: 'Planning no encontrado' })
-    }
 
     return res.status(200).json(updatedPlanning)
   } catch (error) {
